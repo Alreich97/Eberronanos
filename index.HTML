@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eberron – Guía de Campaña</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Fuentes: Cinzel (Títulos épicos) e Inter (Lectura) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta Eberron: Azul Oscuro, Cian Magia, Oro Antiguo */
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --accent: #38bdf8;         /* Azul cian energía */
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --gold: #d4af37;           /* Oro para detalles nobles */
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      
+      --font-heading: 'Cinzel', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.05) 0%, transparent 25%);
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    /* --- Header Hero --- */
+    header {
+      background: linear-gradient(to bottom, #020617, #0f172a);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 1.5rem 4rem; /* Extra padding bottom for overlap */
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    header::before {
+      content: "";
+      position: absolute;
+      top: -50%; left: -10%; width: 120%; height: 200%;
+      background: radial-gradient(circle, transparent 40%, var(--accent-glow) 41%, transparent 42%);
+      opacity: 0.1;
+      pointer-events: none;
+      transform: rotate(15deg);
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      margin: 0;
+      background: linear-gradient(to right, #fff, var(--accent), #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+    }
+
+    .tagline {
+      color: var(--gold);
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      margin-top: 0.5rem;
+      opacity: 0.9;
+    }
+
+    .chip-container {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent);
+      padding: 0.25rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* --- Layout Principal --- */
+    main {
+      max-width: 1100px;
+      margin: -2.5rem auto 2rem;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* --- Navegación (Tabs) --- */
+    .nav-container {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 0.5rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      margin-bottom: 2rem;
+      scrollbar-width: none;
+    }
+    .nav-container::-webkit-scrollbar { display: none; }
+
+    .nav-btn {
+      flex: 1;
+      min-width: 130px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      font-family: var(--font-body);
+    }
+
+    .nav-btn svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      transition: 0.3s;
+      opacity: 0.7;
+    }
+
+    .nav-btn span {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .nav-btn small {
+      font-size: 0.65rem;
+      opacity: 0.6;
+      font-weight: 400;
+      text-transform: none;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+    .nav-btn:hover svg { opacity: 1; }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: #020617;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .nav-btn.active svg { stroke: #020617; opacity: 1; }
+
+    /* --- Contenido de las Pestañas --- */
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 16px;
+      padding: 1rem;
+    }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Tipografía y Elementos --- */
+    h2 {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 1.8rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.8rem;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    h2::before {
+      content: "";
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    h3 {
+      font-family: var(--font-heading);
+      color: var(--gold);
+      font-size: 1.3rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    h4 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      color: var(--text-main);
+    }
+
+    p { margin-bottom: 1rem; opacity: 0.95; font-size: 1rem; }
+    strong { color: #fff; font-weight: 600; }
+
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+    li { margin-bottom: 0.5rem; }
+    li::marker { color: var(--accent); }
+
+    /* --- Componentes --- */
+    .callout {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), transparent);
+      border-left: 4px solid var(--accent);
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+      font-size: 1rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      border-radius: 12px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pill {
+      font-size: 0.85rem;
+      padding: 0.2rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    details {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    details summary {
+      cursor: pointer;
+      color: var(--accent);
+      font-weight: 600;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    details summary::after { content: "+"; font-size: 1.2rem; }
+    details[open] summary::after { content: "-"; }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+      transition: 0.2s;
+    }
+    a:hover { color: #fff; border-bottom-style: solid; }
+
+    .badge-edition {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent);
+      margin-right: 0.5rem;
+      vertical-align: middle;
+      font-weight: bold;
+    }
+    
+    .footnote {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 2.2rem; }
+      .nav-container { justify-content: flex-start; padding-bottom: 1rem; }
+      .nav-btn { min-width: 110px; padding: 0.8rem; }
+      .nav-btn small { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>EBERRON</h1>
+  <p class="tagline">Guía del escenario oficial de Dungeons &amp; Dragons (todas las ediciones)</p>
+  <div class="chip-container">
+    <div class="chip">Magia industrial</div>
+    <div class="chip">Posguerra</div>
+    <div class="chip">Intriga Noir</div>
+  </div>
+</header>
+
+<main>
+  <!-- Menú de Pestañas con Iconos -->
+  <nav class="nav-container" aria-label="Secciones">
+    <button class="nav-btn active" onclick="openTab(event, 'tab-resumen')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      <span>Resumen</span>
+      <small>Vista Rápida</small>
+    </button>
+    <button class="nav-btn" onclick="openTab(event, 'tab-historia')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <span>Historia</span>
+      <small>Línea Temporal</small>
+    </button>
+    <button class="nav-btn" onclick="openTab(event, 'tab-mundo')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+      <span>Mundo</span>
+      <small>Geografía/Razas</small>
+    </button>
+    <button class="nav-btn" onclick="openTab(event, 'tab-magia')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      <span>Magia</span>
+      <small>Clases y Fe</small>
+    </button>
+    <button class="nav-btn" onclick="openTab(event, 'tab-facciones')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      <span>Facciones</span>
+      <small>Casas y Planos</small>
+    </button>
+    <button class="nav-btn" onclick="openTab(event, 'tab-ediciones')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+      <span>Fuentes</span>
+      <small>Libros y Links</small>
+    </button>
+  </nav>
+
+  <!-- Pestaña 1: Resumen -->
+  <section id="tab-resumen" class="tab-panel active">
+    <h2>Resumen general</h2>
+    <p>
+      <strong>Eberron</strong> es un escenario oficial de D&amp;D creado por Keith Baker. Su idea base es:
+      <em>“¿cómo sería un mundo de D&amp;D donde la magia se desarrolló como tecnología?”</em>
+    </p>
+    <div class="pill-row">
+      <span class="pill">Fantasía pulp</span>
+      <span class="pill">Noir y espionaje</span>
+      <span class="pill">Posguerra</span>
+      <span class="pill">Magia industrial</span>
+      <span class="pill">Moralidad gris</span>
+    </div>
+    
+    <div class="grid-2">
+        <div class="card">
+            <h4>Elementos clave</h4>
+            <ul>
+                <li><strong>Magia cotidiana:</strong> farolas mágicas, trenes elementales, anillos de vuelo, comunicaciones arcanas.</li>
+                <li><strong>Mundo tras una guerra de 100 años:</strong> la Última Guerra terminó hace poco; la paz es frágil.</li>
+                <li><strong>Nadie es “siempre bueno” o “siempre malo” por raza:</strong> orcos, goblins, no-muertos pueden ser héroes o villanos.</li>
+                <li><strong>Dioses distantes:</strong> la fe funciona, pero los dioses no se manifiestan en persona.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Época de juego por defecto</h4>
+            <p>
+              Las tres ediciones principales (3.5e, 4e y 5e) sitúan las campañas en el año
+              <strong>998 YK</strong>, dos años después del final de la Última Guerra y del
+              <strong>Día del Duelo</strong>, cuando Cyre fue destruido y se convirtió en la Marca de la Estela.
+            </p>
+        </div>
+    </div>
+
+    <h3>Por qué usar Eberron</h3>
+    <ul>
+      <li>Si quieres <strong>intriga política</strong>, casas nobles, espías y mafias.</li>
+      <li>Si te gusta el rollo <strong>Indiana Jones</strong>: ruinas, artefactos, profecías.</li>
+      <li>Si te atrae un setting donde <strong>la magia tiene una infraestructura</strong> clara (trenes, barcos, bancos mágicos, etc.).</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Idea rápida para jugadores:</strong><br />
+      “Somos un grupo de veteranos de la Última Guerra contratados por una Casa marcada para resolver trabajos sucios
+      que los gobiernos no pueden admitir.”
+    </div>
+  </section>
+
+  <!-- Pestaña 2: Historia -->
+  <section id="tab-historia" class="tab-panel">
+    <h2>Historia del mundo</h2>
+
+    <h3>1. Mito de creación</h3>
+    <div class="card">
+        <ul>
+        <li><strong>Siberys</strong>, el Dragón Superior – hoy es el anillo dorado que rodea el cielo.</li>
+        <li><strong>Eberron</strong>, el Dragón Intermedio – se enroscó alrededor de Khyber y se convirtió en el mundo.</li>
+        <li><strong>Khyber</strong>, el Dragón Inferior – forma el subsuelo lleno de túneles y prisiones.</li>
+        </ul>
+        <p>
+        Hace eras, los <strong>Overlords demoníacos</strong> dominaban la superficie. Los <strong>couatls</strong>
+        sacrificaron sus almas para sellarlos en Khyber, creando la <strong>Llama de Plata</strong> como prisión
+        espiritual del mal primordial.
+        </p>
+    </div>
+
+    <h3>2. Imperios antiguos</h3>
+    <ul>
+      <li>
+        <strong>Gigantes de Xen’drik:</strong> construyeron un imperio mágico colosal. Cuando el plano onírico
+        <strong>Dal Quor</strong> invadió, lo expulsaron de la órbita planar; desde entonces no puede alinearse con el mundo.
+      </li>
+      <li>
+        <strong>Imperio de Dhakaan (goblinoide):</strong> civilización militar y disciplinada que dominó Khorvaire hasta
+        la invasión de <strong>Xoriat</strong>, el plano de la locura.
+      </li>
+    </ul>
+    <p>
+      Los <strong>druidas orcos Gatekeepers</strong> sellaron los portales a Xoriat y salvaron el mundo, pero el
+      imperio dhakaani acabó fragmentado en clanes.
+    </p>
+
+    <h3>3. Galifar y la Última Guerra</h3>
+    <p>
+      Hace unos mil años, el rey <strong>Galifar I</strong> unificó cinco grandes reinos humanos de Khorvaire:
+      Aundair, Breland, Cyre, Karrnath y Thrane. Durante casi 900 años el <strong>Reino de Galifar</strong> fue la gran
+      potencia humana.
+    </p>
+    <p>
+      Cuando el último rey murió y sus herederos se pelearon por la corona, estalló la <strong>Última Guerra</strong>:
+    </p>
+    <ul>
+      <li>Duró más de un siglo (894–996 YK).</li>
+      <li>Las provincias se convirtieron en naciones rivales.</li>
+      <li>Se crearon armas mágicas masivas, ejércitos no-muertos y los <strong>forjados</strong> como soldados.</li>
+    </ul>
+
+    <h3>4. Día del Duelo y Marca de la Estela</h3>
+    <div class="card" style="border-left: 3px solid var(--accent);">
+        <p>
+        El <strong>20 de Olarune de 994 YK</strong>, la nación de <strong>Cyre</strong> fue arrasada en un instante:
+        </p>
+        <ul>
+        <li>Todo se transformó en un páramo cubierto de niebla, las <strong>Tierras de la Estela</strong> (Mournland).</li>
+        <li>Los cadáveres no se descomponen; aparecen conjuros vivientes y fenómenos extraños.</li>
+        <li>La magia curativa se comporta de forma errática.</li>
+        </ul>
+        <p>
+        El setting nunca da una respuesta oficial única: <strong>el origen del Día del Duelo es un misterio a propósito</strong>.
+        </p>
+    </div>
+
+    <h3>5. Tratado de Thronehold y presente</h3>
+    <p>
+      Dos años después del Duelo, las potencias firmaron el <strong>Tratado de Thronehold</strong> (996 YK):
+    </p>
+    <ul>
+      <li>Reconoce nuevas naciones (Darguun, Valenar, Droaam, etc.).</li>
+      <li>Abolición de la <strong>esclavitud de los forjados</strong> y prohibición de fabricar nuevos.</li>
+      <li>Se definen fronteras… sobre el papel.</li>
+    </ul>
+    <p>
+      Año de juego estándar: <strong>998 YK</strong>, con una paz fría, ejércitos desmovilizados a medias
+      y una tensión constante de “guerra fría”.
+    </p>
+
+    <div class="callout">
+      <strong>Entre ediciones:</strong> la historia base (creación, gigantes, Dhakaan, Última Guerra, Tratado y Duelo)
+      es la misma en 3.5e, 4e y 5e. Las diferencias son de detalle, no de eventos.
+    </div>
+  </section>
+
+  <!-- Pestaña 3: Mundo & Pueblos -->
+  <section id="tab-mundo" class="tab-panel">
+    <h2>Mundo y pueblos</h2>
+
+    <h3>1. Continentes principales</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Khorvaire</h4>
+        <p>
+          Centro de la mayoría de campañas. Aquí están las <strong>Cinco Naciones</strong>, Darguun, Valenar, Zilargo,
+          Mror Holds, Llanuras Talenta, Lhazaar, Droaam, etc. En el centro se encuentra la <strong>Marca de la Estela</strong>.
+        </p>
+      </div>
+      <div class="card">
+        <h4>Aerenal</h4>
+        <p>
+          Isla-continente de los elfos Aereni, gobernados por la <strong>Corte Eterna</strong>, ancestros no-muertos
+          de energía positiva que actúan como “dioses familiares”.
+        </p>
+      </div>
+      <div class="card">
+        <h4>Xen’drik</h4>
+        <p>
+          Selvas y ruinas titánicas del antiguo imperio de los gigantes. Drows con múltiples culturas, magia inestable,
+          ideal para campañas de exploración.
+        </p>
+      </div>
+      <div class="card">
+        <h4>Sarlona</h4>
+        <p>
+          Cuna de la humanidad moderna. Actualmente dominada por <strong>Riedra</strong>, imperio psiónico de los
+          <strong>Inspirados</strong>. Sólo <strong>Adar</strong>, tierra de kalashtar, resiste.
+        </p>
+      </div>
+      <div class="card">
+        <h4>Argonnessen</h4>
+        <p>
+          Continente de los <strong>dragones</strong>, que estudian la Profecía Dracónica. Casi nadie entra y sale vivo.
+        </p>
+      </div>
+      <div class="card">
+        <h4>Zonas polares</h4>
+        <p>
+          <strong>Frostfell</strong> y <strong>Everice</strong>: masas de hielo prácticamente inexploradas
+          con rumores de civilizaciones perdidas.
+        </p>
+      </div>
+    </div>
+
+    <h3>2. Razas “clásicas” en clave Eberron</h3>
+    <ul>
+      <li><strong>Humanos:</strong> la raza más numerosa en Khorvaire; base de varias Casas marcadas.</li>
+      <li><strong>Medio elfos (Khoravar):</strong> cultura propia; no son “entre dos mundos”, sino un pueblo con identidad.</li>
+      <li><strong>Enanos de Mror Holds:</strong> más banqueros y comerciantes que “mineros gruñones”; luchan contra horrores en Khyber.</li>
+      <li><strong>Orcos:</strong> druidas Gatekeepers, guardianes de sellos contra aberraciones; también clanes en las Marchas.</li>
+      <li><strong>Medianos:</strong> ciudadanos urbanos ligados a Jorasco/Ghallanda y tribus jinetes de dinosaurios en las Llanuras Talenta.</li>
+      <li><strong>Gnomos de Zilargo:</strong> expertos en información, diplomacia y tecnología elemental; el Trust actúa como policía secreta.</li>
+      <li><strong>Elfos:</strong> Aereni (culto a ancestros), Valenar (guerreros Tairnadal) y elfos urbanos ligados a casas de la Sombra.</li>
+    </ul>
+
+    <h3>3. Razas propias del setting</h3>
+    <div class="grid-2">
+        <div class="card">
+            <h4>Changelings</h4>
+            <p>Cambiaformas descendientes de doppelgangers y humanos; identidades fluidas y cultura clandestina.</p>
+        </div>
+        <div class="card">
+            <h4>Shifters</h4>
+            <p>Descendencia lejana de licántropos; pueden “desatar” rasgos bestiales temporales.</p>
+        </div>
+        <div class="card">
+            <h4>Kalashtar</h4>
+            <p>Humanos fusionados con espíritus quori benévolos; alma dual, habilidades psíquicas y filosofía de la Luz.</p>
+        </div>
+        <div class="card">
+            <h4>Warforged (Forjados)</h4>
+            <p>Constructos vivientes creados para la guerra, liberados tras el Tratado de Thronehold.</p>
+        </div>
+    </div>
+
+    <h3>4. Nuevas razas en el “core” (4e y 5e)</h3>
+    <p>
+      Cuando <strong>dragonborn</strong> y <strong>tieflings</strong> se vuelven razas base en 4e, Eberron los integra:
+    </p>
+    <ul>
+      <li><strong>Dragonborn:</strong> clanes dracónidos ligados a Argonnessen y a Q’barra, a menudo guardianes de sitios antiguos.</li>
+      <li><strong>Tieflings:</strong> linajes marcados por pactos demoníacos, especialmente en ciertas regiones de Sarlona y Droaam.</li>
+    </ul>
+
+    <div class="callout">
+      <strong>En reglas nuevas:</strong> muchas razas se tratan como “especies” flexibles. El lore de Eberron mantiene
+      sus culturas específicas, pero mecánicamente puedes mezclar más sin romper el setting si lo justificas en la historia.
+    </div>
+  </section>
+
+  <!-- Pestaña 4: Magia & Religión -->
+  <section id="tab-magia" class="tab-panel">
+    <h2>Magia y religión</h2>
+
+    <h3>1. Magia como tecnología</h3>
+    <p>
+      En Eberron, los conjuros de <strong>bajo y medio nivel</strong> están tan estudiados que funcionan como “energía
+      industrial”. Esto crea:
+    </p>
+    <ul>
+      <li><strong>Tren Rayo:</strong> tren impulsado por anillos y elementales, gestionado por House Orien.</li>
+      <li><strong>Aeronaves y barcos elementales:</strong> vinculados mediante dragonshards de Khyber.</li>
+      <li><strong>Magewrights:</strong> especialistas que usan uno o dos conjuros como oficio (iluminación, limpieza, mensajería, etc.).</li>
+      <li><strong>Servicios mágicos de pago:</strong> curación, teleportación, envío de mensajes, todo gestionado por Casas.</li>
+    </ul>
+
+    <h3>2. Magia divina sin dioses presentes</h3>
+    <ul>
+      <li>Los <strong>dioses no se manifiestan</strong> físicamente.</li>
+      <li>Clérigos y paladines obtienen poder de la <strong>fe y convicción</strong>, no de una conversación directa con una deidad.</li>
+      <li>Un líder corrupto puede seguir lanzando conjuros si sigue creyendo (aunque su interpretación sea retorcida).</li>
+    </ul>
+
+    <h3>3. El Artífice</h3>
+    <p>
+      El <strong>Artífice</strong> es la clase emblemática del setting:
+    </p>
+    <ul>
+      <li>En 3.5e: especialista en infusiones y creación de objetos mágicos.</li>
+      <li>En 4e: “líder” que cura y mejora aliados mediante inventos.</li>
+      <li>En 5e: medio-caster que infunde equipo, con subclases como Alquimista, Artillero y Herrero de Batalla.</li>
+    </ul>
+    <p>
+      En los libros nuevos (como <em>Eberron: Forge of the Artificer</em>) se actualiza la clase a las reglas revisadas
+      y se expanden sus opciones, pero la fantasía de “ingeniero mágico” se mantiene.
+    </p>
+
+    <h3>4. Religiones principales</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Soberanos y Seis Oscuros</h4>
+        <p>Panteón “genérico” de la gente común de Khorvaire:</p>
+        <ul>
+          <li><strong>Nueve Soberanos:</strong> dioses benévolos de la ley, la comunidad, el arte, la magia, etc.</li>
+          <li><strong>Seis Oscuros:</strong> deidades asociadas al caos, la destrucción o las pasiones descontroladas.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Iglesia de la Llama de Plata</h4>
+        <ul>
+          <li>Orden dedicada a <strong>combatir el mal sobrenatural</strong> (demonios, no-muertos, licántropos peligrosos).</li>
+          <li>Thrane es una teocracia gobernada por el Consejo de Cardenales.</li>
+          <li>Historial de cruzadas excesivas (como la caza masiva de licántropos en el pasado).</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Sangre de Vol</h4>
+        <ul>
+          <li>Filosofía centrada en que la <strong>divinidad reside en la propia sangre</strong>.</li>
+          <li>La muerte es vista como derrota; la no-muerte puede ser un medio para seguir luchando.</li>
+          <li>Incluye a la lich <strong>Erandis d’Vol</strong> y la organización de la Garra Esmeralda.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Otros credos</h4>
+        <ul>
+          <li><strong>Cultos del Dragón Inferior:</strong> sectas que veneran Overlords, daelkyr o entidades de Khyber.</li>
+          <li><strong>Camino de la Inspiración:</strong> religión de Riedra, herramienta de control quori.</li>
+          <li><strong>Senda de la Luz:</strong> filosofía kalashtar.</li>
+          <li><strong>Corte Eterna:</strong> culto a ancestros elfos en Aerenal.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>En tu mesa:</strong> como los dioses nunca se presentan en persona, puedes jugar con herejías, sectas y
+      conflictos internos sin que “un dios baje” a resolver quién tiene razón.
+    </div>
+  </section>
+
+  <!-- Pestaña 5: Facciones & Planos -->
+  <section id="tab-facciones" class="tab-panel">
+    <h2>Facciones, casas y planos</h2>
+
+    <h3>1. Casas marcadas por el dragón</h3>
+    <p>
+      Las <strong>Casas marcadas</strong> son mega-familias mercantiles con presencia en todo Khorvaire. Cada una está
+      ligada a una <strong>Marca de Dragón</strong> (dragonmark):
+    </p>
+    
+    <div class="grid-2">
+      <div class="card">
+        <h4>Industria y Servicios</h4>
+        <ul>
+          <li><strong>Cannith</strong> – Fabricación (armas, forjados).</li>
+          <li><strong>Orien</strong> – Pasaje (rutas, Tren Rayo).</li>
+          <li><strong>Lyrandar</strong> – Tormenta (naves voladoras).</li>
+          <li><strong>Sivis</strong> – Escritura (mensajes, notariado).</li>
+          <li><strong>Kundarak</strong> – Protección (bancos).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Bienestar y Control</h4>
+        <ul>
+            <li><strong>Deneith</strong> – Centinela (mercenarios).</li>
+            <li><strong>Jorasco</strong> – Curación (hospitales).</li>
+            <li><strong>Ghallanda</strong> – Hospitalidad (posadas).</li>
+            <li><strong>Tharashk</strong> – Búsqueda (cazadores, minería).</li>
+            <li><strong>Vadalis</strong> – Manejo de bestias.</li>
+            <li><strong>Phiarlan / Thuranni</strong> – Sombra (espías, artistas).</li>
+        </ul>
+      </div>
+    </div>
+    
+    <p>
+      La antigua <strong>Casa Vol</strong>, ligada a la Marca de la Muerte, fue destruida; su legado persiste en la Sangre de Vol.
+    </p>
+
+    <details>
+      <summary>Cambios de dragonmarks entre ediciones (resumen rápido)</summary>
+      <p>
+        <strong>3.5e:</strong> cadenas de dotes (Least/Lesser/Greater) ligadas estrictamente a razas y linajes.
+      </p>
+      <p>
+        <strong>4e:</strong> dotes simplificadas; mecánicamente más abiertas a cualquier raza (aunque el lore insiste en los linajes).
+      </p>
+      <p>
+        <strong>5e:</strong> en <em>Rising from the Last War</em> son variantes raciales específicas (por ejemplo “Mediano Jorasco”).</p>
+      <p>
+        <strong>Reglas nuevas:</strong> se tiende a tratarlas como <em>feats</em>; el lore mantiene que fuera de las Casas son casos rarísimos y muy especiales.
+      </p>
+    </details>
+
+    <h3>2. Otras organizaciones importantes</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4>El Áurense (Aurum)</h4>
+        <p>
+          Club de élite de ricos, nobles y magnates. Oficialmente filantrópico; en la práctica, una red de conspiradores
+          centrados en su propio beneficio.
+        </p>
+      </div>
+      <div class="card">
+        <h4>Garra Esmeralda</h4>
+        <p>
+          Organización terrorista vinculada a la Sangre de Vol. Usa necromancia y atentados para avanzar los planes
+          de Lady Vol.
+        </p>
+      </div>
+      <div class="card">
+        <h4>Señores del Polvo</h4>
+        <p>
+          Rakshasas inmortales que manipulan la historia desde la sombra para liberar a los Overlords demoníacos de Khyber.
+        </p>
+      </div>
+      <div class="card">
+        <h4>La Cámara</h4>
+        <p>
+          Dragones de Argonnessen que sí intervienen en el mundo, intentando guiar la <strong>Profecía Dracónica</strong>
+          hacia resultados favorables.
+        </p>
+      </div>
+      <div class="card">
+        <h4>Lord of Blades</h4>
+        <p>
+          Líder forjado radical en la Mournland; busca un estado sólo de forjados y ve a las razas “de carne” como opresoras.
+        </p>
+      </div>
+      <div class="card">
+        <h4>Universidad Morgrave, etc.</h4>
+        <p>
+          Instituciones académicas que patrocinan expediciones a Xen’drik y ruinas antiguas, perfectas para tramas de
+          exploración y saqueo arqueológico.
+        </p>
+      </div>
+    </div>
+
+    <h3>3. Planos y Profecía</h3>
+    <h4>El Gran Orrery</h4>
+    <p>
+      Eberron está rodeado por <strong>13 planos</strong> que “orbitan” metafísicamente:
+    </p>
+    <ul>
+      <li><strong>Thelanis:</strong> plano feérico y de los cuentos.</li>
+      <li><strong>Mabar:</strong> oscuridad, energía negativa, no-muertos.</li>
+      <li><strong>Lamannia:</strong> naturaleza salvaje.</li>
+      <li><strong>Shavarath:</strong> guerra eterna.</li>
+      <li><strong>Dolurrh:</strong> reino de los muertos.</li>
+      <li><strong>Xoriat:</strong> locura y aberraciones, sellado por Gatekeepers.</li>
+      <li><strong>Dal Quor:</strong> plano de los sueños, expulsado de la órbita.</li>
+    </ul>
+    <p>
+      Según la posición del plano (coterminante o remoto), su influencia en el mundo aumenta o disminuye.
+    </p>
+
+    <h4>Profecía Dracónica</h4>
+    <p>
+      La <strong>Profecía Dracónica</strong> es un entramado de signos grabados en el mundo (rocas, estrellas,
+      dragonshards, incluso dragonmarks) que describe posibles futuros.
+    </p>
+
+    <h3>4. Dragonshards</h3>
+    <ul>
+      <li><strong>Siberys:</strong> fragmentos dorados que caen del cielo; se usan para magia potente.</li>
+      <li><strong>Eberron:</strong> incrustados en la corteza; sirven como “baterías” y componentes comunes.</li>
+      <li><strong>Khyber:</strong> en el subsuelo; necesarios para vincular elementales y crear muchas maravillas mágicas.</li>
+    </ul>
+  </section>
+
+  <!-- Pestaña 6: Ediciones & Fuentes -->
+  <section id="tab-ediciones" class="tab-panel">
+    <h2>Ediciones y fuentes oficiales</h2>
+
+    <h3>1. Resumen por edición</h3>
+    <ul>
+      <li>
+        <span class="badge-edition">3.5e</span>
+        <strong>Eberron Campaign Setting:</strong>
+        Primera presentación completa del mundo. Incluye historia, geografía, razas nuevas y reglas para dragonmarks y
+        el artífice clásico.
+      </li>
+      <li>
+        <span class="badge-edition">4e</span>
+        <strong>Eberron Campaign Guide / Player’s Guide:</strong>
+        Adapta el setting a la estructura de 4e, integra dragonborn y tieflings al “core” y ajusta la cosmología al
+        modelo de Astral Sea / Elemental Chaos.
+      </li>
+      <li>
+        <span class="badge-edition">5e</span>
+        <strong>Eberron: Rising from the Last War:</strong>
+        Reintroduce Eberron para 5e: artífice actualizado, razas icónicas, bestiario, subclases y una gran campaña
+        ejemplo. Vuelve al estilo de cosmología propio de Eberron.
+      </li>
+      <li>
+        <span class="badge-edition">5e (2024+)</span>
+        <strong>Eberron: Forge of the Artificer:</strong>
+        Libro nuevo centrado en actualizar el Artífice y especies clave al marco de reglas revisado.
+      </li>
+    </ul>
+
+    <h3>2. Orden recomendado para leer</h3>
+    <ol>
+      <li><strong>Eberron: Rising from the Last War</strong> – si juegas 5e, es tu base principal.</li>
+      <li><strong>Eberron Campaign Setting (3.5e)</strong> – para detalles de trasfondo y tono original.</li>
+      <li><strong>Forge of the Artificer</strong> – para actualizar reglas.</li>
+      <li><strong>Guías de Keith Baker</strong> – para matices de lore y nuevas ideas.</li>
+    </ol>
+
+    <h3>3. Enlaces útiles</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Libros Oficiales</h4>
+        <ul>
+            <li><a href="https://www.drivethrurpg.com/en/product/28474/eberron-campaign-setting-3e" target="_blank">Eberron Campaign Setting 3e (PDF)</a></li>
+            <li><a href="https://marketplace.dndbeyond.com/beyond-digital/CBOY5JIOS" target="_blank">D&D Beyond: Rising from the Last War</a></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Comunidad y Autor</h4>
+        <ul>
+            <li><a href="https://keith-baker.com/" target="_blank">Blog de Keith Baker (Kanon)</a></li>
+            <li><a href="https://eberron.fandom.com/wiki/Keith-baker.com_Articles_Index" target="_blank">Índice de Artículos Eberron Wiki</a></li>
+            <li><a href="https://www.reddit.com/r/Eberron/comments/1g80ibm/the_most_comprehensive_list_of_eberron_books_and/" target="_blank">Reddit: Lista de recursos</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>5. Cómo usar este documento</h3>
+    <p>
+      Puedes usar las pestañas así:
+    </p>
+    <ul>
+      <li><strong>Resumen:</strong> para explicar rápidamente qué es Eberron a un grupo.</li>
+      <li><strong>Historia:</strong> para situar eventos clave y crear trasfondos de PJ.</li>
+      <li><strong>Mundo &amp; Pueblos:</strong> para elegir razas y regiones de origen.</li>
+      <li><strong>Magia &amp; Religión:</strong> para clases lanzadoras y personajes devotos.</li>
+      <li><strong>Facciones &amp; Planos:</strong> para ganchos de campaña largos.</li>
+      <li><strong>Ediciones &amp; Fuentes:</strong> para decidir qué libros comprar o consultar.</li>
+    </ul>
+
+    <p class="footnote">
+      Adáptalo sin miedo: el propio creador insiste en la idea de <strong>“tu Eberron”</strong>, donde tú decides qué es canon en tu mesa.
+    </p>
+  </section>
+</main>
+
+<script>
+  function openTab(evt, tabName) {
+    var tabPanels = document.getElementsByClassName("tab-panel");
+    for (var i = 0; i < tabPanels.length; i++) {
+      tabPanels[i].style.display = "none";
+      tabPanels[i].classList.remove("active");
+    }
+
+    var navBtns = document.getElementsByClassName("nav-btn");
+    for (var i = 0; i < navBtns.length; i++) {
+      navBtns[i].className = navBtns[i].className.replace(" active", "");
+    }
+
+    document.getElementById(tabName).style.display = "block";
+    setTimeout(() => {
+      document.getElementById(tabName).classList.add("active");
+    }, 10);
+    
+    evt.currentTarget.className += " active";
+  }
+</script>
+
+</body>
+</html>
